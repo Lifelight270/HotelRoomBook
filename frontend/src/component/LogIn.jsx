@@ -25,7 +25,7 @@ const LogIn = () => {
     e.preventDefault();
 
     try {
-      await axios.post("http://localhost:8000/forgot-password", {
+      await axios.post("https://hotelroombook.onrender.com/forgot-password", {
         email: forgotPasswordEmail,
       });
 
@@ -50,7 +50,10 @@ const LogIn = () => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("http://localhost:8000/login", credentials);
+      const res = await axios.post(
+        "https://hotelroombook.onrender.com/login",
+        credentials
+      );
 
       const userData = res.data.getUser.username;
 
@@ -100,7 +103,7 @@ const LogIn = () => {
                     <div>
                       <label htmlFor="identifier">Email</label>
                       <input
-                        type="email"  
+                        type="email"
                         id="identifier"
                         name="email"
                         value={credentials.email}

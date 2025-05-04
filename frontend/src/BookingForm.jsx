@@ -67,7 +67,10 @@ const BookingForm = ({
       return;
     }
     try {
-      await axios.post("http://localhost:8000/api/users", formData);
+      await axios.post(
+        "https://hotelroombook.onrender.com/api/users",
+        formData
+      );
       console.log("Data posted successfully");
       // setIsBookingSuccessful(true);
       setIsCanceling(false);

@@ -4,7 +4,7 @@ import "./Component.css";
 import { Link, useNavigate } from "react-router-dom";
 
 const Signup = () => {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const [signData, setSignData] = useState({
     username: "",
     email: "",
@@ -28,7 +28,10 @@ const Signup = () => {
       return;
     }
     try {
-      await axios.post("http://localhost:8000/api/signusers", signData);
+      await axios.post(
+        "https://hotelroombook.onrender.com/api/signusers",
+        signData
+      );
 
       console.log("Data posted successfully");
       alert("successfully submitted");
@@ -39,7 +42,7 @@ const Signup = () => {
         password: "",
         confirmPassword: "",
       });
-      navigate("/login")
+      navigate("/login");
     } catch (error) {
       console.error("Error submitting form:", error.message);
       alert("error");

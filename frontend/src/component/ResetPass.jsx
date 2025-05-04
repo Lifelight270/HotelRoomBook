@@ -34,9 +34,12 @@ const ResetPass = () => {
 
     try {
       // POST request to backend with password reset data
-      await axios.post(`http://localhost:8000/reset-password/${id}/${token}`, {
-        password: passwords.password,
-      });
+      await axios.post(
+        `https://hotelroombook.onrender.com/reset-password/${id}/${token}`,
+        {
+          password: passwords.password,
+        }
+      );
 
       alert("Password reset successfully!");
       setPasswords({ password: "", confirmPassword: "" });
