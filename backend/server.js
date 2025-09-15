@@ -92,7 +92,7 @@ app.post("/forgot-password", async (req, res) => {
       from: "lightlife908@gmail.com",
       to: forgetUser.email,
       subject: "Password Reset",
-      text: `Click to reset Password: https://hotel-room-book.vercel.app/${frontendURL}/reset-password/${forgetUser._id}/${resetToken}`,
+      text: `Click to reset Password: https://hotel-room-book.vercel.app/reset-password/${forgetUser._id}/${resetToken}`,
       // http://localhost:5000/reset-password/${userId}/${token}
       // https://hotel-room-book.vercel.app/reset-password/
     };

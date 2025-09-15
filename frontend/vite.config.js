@@ -6,12 +6,12 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: "0.0.0.0", // Allows access from network
-    port: parseInt(process.env.PORT) || 5000, // Uses env PORT or 5000 as default
+    port: 5173,      // Set default Vite port
   },
   build: {
-    outDir: "dist", // Ensures output goes to `dist/`
-    assetsDir: "assets", // Keeps static assets inside `dist/assets`
-    sourcemap: true, // Helps debugging production issues
+    outDir: "dist",  // Output folder
+    assetsDir: "assets", 
+    sourcemap: true, 
   },
-  base: "./", // Ensures relative paths for deployment (use `/your-repo-name/` for GitHub Pages)
+  base: "./",       // Relative paths for deployment
 });
