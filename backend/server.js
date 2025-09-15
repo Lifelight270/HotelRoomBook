@@ -8,6 +8,7 @@ const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 // const path = require("path");
+// const frontendURL = process.env.FRONTEND_URL || "http://localhost:5000";
 
 // const __dirname = path.resolve();
 
@@ -91,8 +92,9 @@ app.post("/forgot-password", async (req, res) => {
       from: "lightlife908@gmail.com",
       to: forgetUser.email,
       subject: "Password Reset",
-      text: `Click to reset Password:  https://hotel-room-book.vercel.app/reset-password/${forgetUser._id}/${resetToken}`,
+      text: `Click to reset Password: https://hotel-room-book.vercel.app/${frontendURL}/reset-password/${forgetUser._id}/${resetToken}`,
       // http://localhost:5000/reset-password/${userId}/${token}
+      // https://hotel-room-book.vercel.app/reset-password/
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -109,51 +111,45 @@ app.post("/forgot-password", async (req, res) => {
   }
 });
 
-app.get("/reset-password/:id/:token", async (req, res) => {
-  try {
-    const { id, token } = req.params;
-    const decodedToken = jwt.verify(token, SECRET_KEY);
+// app.get("/reset-password/:id/:token", async (req, res) => {
+//   try {
+//     const { id, token } = req.params;
+//     const decodedToken = jwt.verify(token, SECRET_KEY);
 
-    const resetUser = await SignupUser.findById(decodedToken.userId);
+//     const resetUser = await SignupUser.findById(decodedToken.userId);
 
-    if (!resetUser) {
-      return res.status(404).json({ message: "User not found" });
-    }
+//     if (!resetUser) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
 
-    res.render("index", { email: decodedToken.email });
-    //  return res.status(200).json({ message: "Password reset successfully",id });
-  } catch (error) {
-    console.error("Error during reset password:", error.message);
-    return res.status(500).json({ message: "Internal server error" });
-  }
-});
+//     res.render("index", { email: decodedToken.email });
+//     //  return res.status(200).json({ message: "Password reset successfully",id });
+//   } catch (error) {
+//     console.error("Error during reset password:", error.message);
+//     return res.status(500).json({ message: "Internal server error" });
+//   }
+// });
 
 app.post("/reset-password/:id/:token", async (req, res) => {
   try {
     const { id, token } = req.params;
     const { password } = req.body;
 
-    // Verify the token and get the user ID
-    const decodedToken = jwt.verify(token, SECRET_KEY);
+    // Verify token
+    const decoded = jwt.verify(token, SECRET_KEY);
+    if (decoded.userId !== id)
+      return res.status(401).json({ message: "Invalid token" });
 
-    // Check if the user exists and matches the token
-    const resetUser = await SignupUser.findById(decodedToken.userId);
-
-    if (!resetUser) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    // Update the user's password
+    // Update password
     const hashedPassword = await bcrypt.hash(password, 10);
     await SignupUser.updateOne(
-      { _id: resetUser._id },
+      { _id: id },
       { $set: { password: hashedPassword } }
     );
 
-    // You can send a response or render a success page
     return res.status(200).json({ message: "Password reset successfully" });
-  } catch (error) {
-    console.error("Error during password reset:", error.message);
+  } catch (err) {
+    console.error(err);
     return res.status(500).json({ message: "Internal server error" });
   }
 });

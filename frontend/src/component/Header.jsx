@@ -1,5 +1,6 @@
-import React, { useContext } from "react";
-import { UserContext } from "./UserContext";
+import { UserContext} from "./UserContext";
+import { useContext } from "react"; // import useContext from React
+
 import { NavLink } from "react-router-dom";
 import "./Component.css";
 

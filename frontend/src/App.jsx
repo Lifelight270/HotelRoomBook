@@ -1,9 +1,8 @@
-import React from "react";
 import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Content from "./Mainbody/Content";
-import FooterSec from "./FooterSec/FooterSec";
 import { Home, About, Room, LogIn, Signup, ResetPass } from "./component";
+import { UserProvider } from "./component/UserContext";
 
 const router = createBrowserRouter([
   {
@@ -41,8 +40,9 @@ const router = createBrowserRouter([
 function App() {
   return (
     <div className="App">
-      <RouterProvider router={router} />
-      <FooterSec />
+      <UserProvider>
+        <RouterProvider router={router} />
+      </UserProvider>
     </div>
   );
 }

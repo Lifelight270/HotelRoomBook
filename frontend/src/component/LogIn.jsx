@@ -1,54 +1,29 @@
-import { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
-import React, { useContext } from "react";
 import { UserContext } from "./UserContext";
-
+import { Link, useNavigate } from "react-router-dom";
 import "./Component.css";
-import { Link, useNavigate, useParams } from "react-router-dom";
 
 const LogIn = () => {
   const navigate = useNavigate();
   const { setUser } = useContext(UserContext);
-  const [credentials, setCredentials] = useState({
-    email: "",
-    password: "",
-  });
 
-  // const { id, token } = useParams();
-  // console.log(`${id} and ${token}`);
+  // State for login credentials
+  const [credentials, setCredentials] = useState({ email: "", password: "" });
 
+  // State for forgot password
   const [forgotPasswordMode, setForgotPasswordMode] = useState(false);
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
-  // const [showSignup, setShowSignup] = useState(false);
 
-  const handleForgotPasswordSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      await axios.post("https://hotelroombook.onrender.com/forgot-password", {
-        email: forgotPasswordEmail,
-      });
-
-      alert("Reset password instructions sent to your email");
-
-      setForgotPasswordMode(false);
-      setForgotPasswordEmail("");
-    } catch (error) {
-      console.error("Error during forgot password:", error.message);
-      alert("Error occurred while processing forgot password");
-    }
-  };
+  // Handle input changes for login form
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setCredentials({
-      ...credentials,
-      [name]: value,
-    });
+    setCredentials({ ...credentials, [name]: value });
   };
 
+  // Submit login form
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const res = await axios.post(
         "https://hotelroombook.onrender.com/login",
@@ -59,99 +34,117 @@ const LogIn = () => {
 
       localStorage.setItem("user", JSON.stringify(userData));
       setUser(userData);
-      setCredentials({
-        email: "",
-        password: "",
-      });
-      navigate("/");
+
+      // Reset form
+      setCredentials({ email: "", password: "" });
+
       alert(`Successfully logged in as ${userData}`);
-      // Optionally redirect user after login
+      navigate("/");
     } catch (error) {
       console.error("Error during login:", error.message);
-      alert("Login failed");
+      alert("Login failed. Please check your credentials.");
+    }
+  };
+
+  // Submit forgot password form
+  const handleForgotPasswordSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(
+        "https://hotelroombook.onrender.com/forgot-password",
+        { email: forgotPasswordEmail }
+      );
+
+      alert(res.data.message || "Reset instructions sent to your email.");
+
+      // Reset state
+      setForgotPasswordMode(false);
+      setForgotPasswordEmail("");
+    } catch (error) {
+      console.error("Error during forgot password:", error.message);
+      alert("Error occurred while processing forgot password.");
     }
   };
 
   return (
-    <>
-      <div className="login">
-        <div className="container">
-          <div className="row flex-box">
-            <div className="col form-box">
-              <div className="login-box">
-                {forgotPasswordMode ? (
-                  <form
-                    className="forget-form"
-                    onSubmit={handleForgotPasswordSubmit}>
-                    <h2 className="text-center">Forgot Password</h2>
-                    <div className="forget-email">
-                      <label htmlFor="forgotPasswordEmail">Email</label>
-                      <input
-                        type="email"
-                        id="forgotPasswordEmail"
-                        name="forgotPasswordEmail"
-                        value={forgotPasswordEmail}
-                        onChange={(e) => setForgotPasswordEmail(e.target.value)}
-                        required
-                      />
-                    </div>
-                    <button type="submit">Reset Password</button>
-                  </form>
-                ) : (
-                  <form className="form-input" onSubmit={handleSubmit}>
-                    <h2 className="text-center">Login</h2>
-                    <div>
-                      <label htmlFor="identifier">Email</label>
-                      <input
-                        type="email"
-                        id="identifier"
-                        name="email"
-                        value={credentials.email}
-                        onChange={handleChange}
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="password">Password</label>
-                      <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        value={credentials.password}
-                        onChange={handleChange}
-                        required
-                      />
-                    </div>
-                    <button type="submit" className="login-btn">
-                      Login
+    <div className="login">
+      <div className="container">
+        <div className="row flex-box">
+          <div className="col form-box">
+            <div className="login-box">
+              {forgotPasswordMode ? (
+                <form
+                  className="forget-form"
+                  onSubmit={handleForgotPasswordSubmit}
+                >
+                  <h2 className="text-center">Forgot Password</h2>
+                  <div className="forget-email">
+                    <label htmlFor="forgotPasswordEmail">Email</label>
+                    <input
+                      type="email"
+                      id="forgotPasswordEmail"
+                      value={forgotPasswordEmail}
+                      onChange={(e) => setForgotPasswordEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <button type="submit">Reset Password</button>
+                  <button
+                    type="button"
+                    className="toggle-btn"
+                    onClick={() => setForgotPasswordMode(false)}
+                  >
+                    Back to Login
+                  </button>
+                </form>
+              ) : (
+                <form className="form-input" onSubmit={handleSubmit}>
+                  <h2 className="text-center">Login</h2>
+                  <div>
+                    <label htmlFor="email">Email</label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={credentials.email}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="password">Password</label>
+                    <input
+                      type="password"
+                      id="password"
+                      name="password"
+                      value={credentials.password}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                  <button type="submit" className="login-btn">
+                    Login
+                  </button>
+                  <hr />
+                  <p>
+                    Create an account? <Link to="/signup">Click Here</Link>
+                  </p>
+                  <div>
+                    <button
+                      type="button"
+                      className="toggle-btn"
+                      onClick={() => setForgotPasswordMode(true)}
+                    >
+                      Forgot Password
                     </button>
-                    <hr />
-                    <p>
-                      Create One?
-                      <Link to="/signup">Click Here</Link>
-                    </p>
-                    <div>
-                      <p>
-                        <button
-                          type="button"
-                          className="login-btn"
-                          onClick={() =>
-                            setForgotPasswordMode((prevMode) => !prevMode)
-                          }>
-                          {forgotPasswordMode
-                            ? "Back to Login"
-                            : "Forgot Password"}
-                        </button>
-                      </p>
-                    </div>
-                  </form>
-                )}
-              </div>
+                  </div>
+                </form>
+              )}
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
